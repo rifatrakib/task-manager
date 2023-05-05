@@ -22,8 +22,9 @@ class SettingsFactory:
 
 
 @lru_cache()
-def get_settings() -> SettingsFactory:
-    return SettingsFactory(mode=config("MODE", default="development", cast=str))()
+def get_settings() -> BaseConfig:
+    factory = SettingsFactory(mode=config("MODE", default="development", cast=str))
+    return factory()
 
 
 settings: BaseConfig = get_settings()

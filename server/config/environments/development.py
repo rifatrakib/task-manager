@@ -6,4 +6,4 @@ class DevelopmentConfig(BaseConfig):
     MODE: str = "development"
 
     class Config:
-        env_file = ".env.development"
+        env_file = "configurations/.env.development"

@@ -6,4 +6,4 @@ class StagingConfig(BaseConfig):
     MODE: str = "staging"
 
     class Config:
-        env_file = ".env.staging"
+        env_file = "configurations/.env.staging"

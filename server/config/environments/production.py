@@ -6,4 +6,4 @@ class ProductionConfig(BaseConfig):
     MODE: str = "production"
 
     class Config:
-        env_file = ".env.production"
+        env_file = "configurations/.env.production"
