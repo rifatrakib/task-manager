@@ -1,23 +1,29 @@
 from functools import lru_cache
 
-from pydantic import BaseSettings, Extra, PostgresDsn
+from decouple import config
+
+from server.config.environments.base import BaseConfig
+from server.config.environments.development import DevelopmentConfig
+from server.config.environments.production import ProductionConfig
+from server.config.environments.staging import StagingConfig
 
 
-class AppConfig(BaseSettings):
-    APP_NAME: str
-    MODE: str
-    RDS_URL: PostgresDsn
+class SettingsFactory:
+    def __init__(self, mode: str):
+        self.mode = mode
 
-    class Config:
-        extra = Extra.forbid
-        env_file = ".env"
-        env_file_encoding = "UTF-8"
-        env_nested_delimiter = "__"
+    def __call__(self) -> BaseConfig:
+        if self.mode == "staging":
+            return StagingConfig()
+        elif self.mode == "production":
+            return ProductionConfig()
+        else:
+            return DevelopmentConfig()
 
 
 @lru_cache()
-def get_app_config():
-    return AppConfig()
+def get_settings() -> SettingsFactory:
+    return SettingsFactory(mode=config("MODE", default="development", cast=str))()
 
 
-settings: AppConfig = get_app_config()
+settings: BaseConfig = get_settings()
