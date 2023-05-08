@@ -1,14 +1,17 @@
 import re
 from datetime import datetime
-from typing import Callable, Generator, Union
+from typing import Callable, Generator, TypeAlias, TypeVar, Union
 from uuid import UUID
 
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
 from pydantic.datetime_parse import parse_datetime
 
 from server.manager.utils import as_utc, get_timestamp, get_utc_timezone
+
+StrOrNone: TypeAlias = Union[str, None]
+SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
 
 class StringUUID(str):
