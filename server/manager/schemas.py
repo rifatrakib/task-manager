@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Generic, List, Union
+from typing import Any, Generic, List, Union
 from uuid import UUID
 
 import orjson
@@ -8,8 +8,8 @@ from pydantic import BaseModel, Field
 from pydantic.generics import GenericModel
 
 from server.manager.enums import ClientEndStatus
-from server.manager.types import SchemaType, StrOrNone
-from server.manager.utils import get_timestamp, orjson_dumps
+from server.manager.types import SchemaType, StrOrNone, Timestamp
+from server.manager.utils import get_timestamp, orjson_dumps, to_camel_case
 
 
 class BaseInSchema(BaseModel):
@@ -23,6 +23,11 @@ class BaseInSchema(BaseModel):
         orm_mode = True
         use_enum_values = True
         validate_assignment = True
+
+
+class OutputAliasConfig(BaseModel):
+    class Config:
+        alias_generator: Any = to_camel_case
 
 
 class BaseOutSchema(BaseInSchema):
@@ -56,3 +61,19 @@ class UnprocessableEntityOutSchema(BaseOutSchema):
     message: str = Field(default="Field required.")
     type: str = Field(default="value_error.missing")
     context: StrOrNone = Field(default=None)
+
+
+class CreatedAtOutSchema(OutputAliasConfig):
+    """Schema with `createdAt` Timestamp field."""
+
+    created_at: Timestamp = Field(title="Created at")
+
+
+class UpdatedAtOutSchema(OutputAliasConfig):
+    """Schema with `updatedAt` Timestamp field."""
+
+    updated_at: Timestamp = Field(title="Updated at")
+
+
+class WriteHistoryOutSchema(CreatedAtOutSchema, UpdatedAtOutSchema):
+    """Schema with `createdAt` and `updatedAt` Timestamp fields."""
