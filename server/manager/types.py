@@ -5,6 +5,7 @@ from uuid import UUID
 
 import phonenumbers
 from phonenumbers.phonenumberutil import NumberParseException
+from pydantic import EmailStr
 from pydantic.datetime_parse import parse_datetime
 
 from server.manager.utils import as_utc, get_timestamp, get_utc_timezone
@@ -80,3 +81,32 @@ class Phone(str):
                 return v.removeprefix(prefix)
 
         raise ValueError("Impossible Number")
+
+    @classmethod
+    def __modify_schema__(cls, field_schema: dict) -> None:
+        """Update type OpenAPIv3 schema."""
+        field_schema.update(
+            title="Phone number",
+            max_length=15,
+            example="380978531216",
+            examples=["380978531216", "380978531226"],
+        )
+
+
+class Email(EmailStr):
+    """Lowercase version of Pydantic EmailStr field type."""
+
+    @classmethod
+    def __get_validators__(cls) -> Generator[Callable[[str], str], None, None]:
+        """Add extra validator to Pydantic EmailStr field."""
+        yield from super().__get_validators__()
+        yield cls.lowercase
+
+    @classmethod
+    def lowercase(cls, v: str) -> str:
+        """Lowercase email value.
+
+        Returns:
+            value (str): lowercase value of email.
+        """
+        return v.lower()
