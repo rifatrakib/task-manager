@@ -77,3 +77,25 @@ class UpdatedAtOutSchema(OutputAliasConfig):
 
 class WriteHistoryOutSchema(CreatedAtOutSchema, UpdatedAtOutSchema):
     """Schema with `createdAt` and `updatedAt` Timestamp fields."""
+
+
+class TokenPayloadSchema(BaseOutSchema):
+    """Base JWT token payloads."""
+
+    iat: Timestamp
+    aud: str
+    exp: Timestamp
+    nbf: Timestamp
+    iss: str
+
+
+class TokenOptionsSchema(BaseOutSchema):
+    """Schema options for PyJWT parsing & validation."""
+
+    verify_signature: bool = Field(default=True)
+    require: List[str] = Field(default=["aud", "exp", "iat", "iss", "nbf"])
+    verify_aud: bool = Field(default=True)
+    verify_exp: bool = Field(default=True)
+    verify_iat: bool = Field(default=True)
+    verify_iss: bool = Field(default=True)
+    verify_nbf: bool = Field(default=True)

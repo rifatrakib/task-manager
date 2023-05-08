@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 
 import orjson
 from fastapi.encoders import jsonable_encoder
+from pydash import camel_case
 
 
 @lru_cache()
@@ -48,6 +49,10 @@ def get_timestamp(v: datetime) -> float:
 def proxy_func(x: Any) -> Any:
     """Function that proxies value back (doing nothing)."""
     return x
+
+
+def to_camel_case(key: str) -> str:
+    return camel_case(key)
 
 
 encodings_dict: Dict[Any, Callable[[Any], Any]] = {
