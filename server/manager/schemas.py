@@ -4,11 +4,11 @@ from uuid import UUID
 
 import orjson
 import pydantic
-from pydantic import BaseModel, Field
+from pydantic import AnyHttpUrl, BaseModel, Field
 from pydantic.generics import GenericModel
 
 from server.manager.enums import ClientEndStatus
-from server.manager.types import SchemaType, StrOrNone, Timestamp
+from server.manager.types import ObjectsVar, SchemaType, StrOrNone, Timestamp
 from server.manager.utils import get_timestamp, orjson_dumps, to_camel_case
 
 
@@ -99,3 +99,23 @@ class TokenOptionsSchema(BaseOutSchema):
     verify_iat: bool = Field(default=True)
     verify_iss: bool = Field(default=True)
     verify_nbf: bool = Field(default=True)
+
+
+class PaginationOutSchema(BaseOutSchema, GenericModel, Generic[ObjectsVar], OutputAliasConfig):
+    """Generic OurSchema that uses for pagination."""
+
+    objects: List[ObjectsVar]
+    offset: int = Field(default=0)
+    limit: int = Field(default=100)
+    count: Union[int, None] = Field(default=0, description="Number of objects returned in this response.")
+    total_count: int = Field(default=..., description="Numbed of objects counted inside db for this query.")
+    next_url: Union[AnyHttpUrl, None] = Field(default=None, title="Next page url")
+    previous_url: Union[AnyHttpUrl, None] = Field(default=None, title="Previous page url")
+    page: int = Field(default=1, title="Page", description="Current page number (depends on offset and limit).")
+    pages: int = Field(default=..., title="Pages", description="Total number of pages.")
+
+
+class ClientPaginationOutSchema(ClientOutSchema):
+    """Cover PaginationOutSchema with client end structure."""
+
+    data: PaginationOutSchema

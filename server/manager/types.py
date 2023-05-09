@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import Callable, Generator, TypeAlias, TypeVar, Union
+from typing import Callable, Dict, Generator, TypeAlias, TypeVar, Union
 from uuid import UUID
 
 import phonenumbers
@@ -10,6 +10,7 @@ from pydantic.datetime_parse import parse_datetime
 
 from server.manager.utils import as_utc, get_timestamp, get_utc_timezone
 
+ObjectsVar = TypeVar("ObjectsVar", bound=Dict[str, Union[None, int, float, str, dict, list]])
 StrOrNone: TypeAlias = Union[str, None]
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
